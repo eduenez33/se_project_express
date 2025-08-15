@@ -9,6 +9,8 @@ const getClothingItems = (req, res) => {
 const createClothingItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
 
+  console.log(req.user._id);
+
   ClothingItem.create({ name, weather, imageUrl })
     .then((item) => res.status(201).send(item))
     .catch((err) => res.status(400).send({ message: "Error creating item" }));
