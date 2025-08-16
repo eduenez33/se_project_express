@@ -10,9 +10,13 @@ const getClothingItems = (req, res) => {
     .then((items) => res.send(items))
     .catch((err) => {
       console.error(err);
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error occurred on the server" });
+      if (err.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid query parameters" });
+      } else {
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: "An error occurred on the server" });
+      }
     });
 };
 
@@ -65,4 +69,62 @@ const deleteClothingItem = (req, res) => {
     });
 };
 
-module.exports = { getClothingItems, createClothingItem, deleteClothingItem };
+const addLike = (req, res) => {
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .orFail(() => {
+      const error = new Error("Item not found");
+      error.statusCode = NOT_FOUND;
+      return error;
+    })
+    .then((item) => res.send(item))
+    .catch((err) => {
+      console.error(err);
+      if (err.statusCode === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: err.message });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+      } else {
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: "An error occurred on the server" });
+      }
+    });
+};
+
+const removeLike = (req, res) => {
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .orFail(() => {
+      const error = new Error("Item not found");
+      error.statusCode = NOT_FOUND;
+      return error;
+    })
+    .then((item) => res.send(item))
+    .catch((err) => {
+      console.error(err);
+      if (err.statusCode === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: err.message });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
+      } else {
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: "An error occurred on the server" });
+      }
+    });
+};
+
+module.exports = {
+  getClothingItems,
+  createClothingItem,
+  deleteClothingItem,
+  addLike,
+  removeLike,
+};
