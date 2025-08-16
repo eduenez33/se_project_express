@@ -49,7 +49,7 @@ const createUser = (req, res) => {
       .send({ message: "Name and avatar are required" });
   }
 
-  User.create({ name, avatar })
+  return User.create({ name, avatar })
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       console.error(err);
