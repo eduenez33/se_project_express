@@ -52,7 +52,7 @@ const deleteClothingItem = (req, res) => {
       error.statusCode = NOT_FOUND;
       return error;
     })
-    .then((item) => {
+    .then(() => {
       res.send({ message: "Item deleted successfully" });
     })
     .catch((err) => {
