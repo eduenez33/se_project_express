@@ -50,7 +50,7 @@ const deleteClothingItem = (req, res) => {
     .orFail(() => {
       const error = new Error("Item not found");
       error.statusCode = NOT_FOUND;
-      return error;
+      throw error;
     })
     .then(() => {
       res.send({ message: "Item deleted successfully" });
@@ -78,7 +78,7 @@ const addLike = (req, res) => {
     .orFail(() => {
       const error = new Error("Item not found");
       error.statusCode = NOT_FOUND;
-      return error;
+      throw error;
     })
     .then((item) => res.send(item))
     .catch((err) => {
@@ -104,7 +104,7 @@ const removeLike = (req, res) => {
     .orFail(() => {
       const error = new Error("Item not found");
       error.statusCode = NOT_FOUND;
-      return error;
+      throw error;
     })
     .then((item) => res.send(item))
     .catch((err) => {
