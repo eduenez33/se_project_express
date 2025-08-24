@@ -23,7 +23,7 @@ const getUserById = (req, res) => {
     .orFail(() => {
       const error = new Error("User not found");
       error.statusCode = NOT_FOUND;
-      return error;
+      throw error;
     })
     .then((user) => {
       res.send(user);
