@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const {
   BAD_REQUEST,
   NOT_FOUND,
+  CONFLICT,
   INTERNAL_SERVER_ERROR,
 } = require("../utils/errors");
 
@@ -58,6 +59,10 @@ const createUser = (req, res) => {
       console.error(err);
       if (err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({ message: "Invalid data provided" });
+      } else if (err.code === 11000) {
+        res
+          .status(CONFLICT)
+          .send({ message: "User with this email already exists" });
       } else {
         res
           .status(INTERNAL_SERVER_ERROR)
