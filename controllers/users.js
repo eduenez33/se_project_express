@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const bcrypt = require("bcryptjs");
 const {
   BAD_REQUEST,
   NOT_FOUND,
@@ -41,15 +42,17 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
+  const { name, avatar, email, password } = req.body;
 
-  if (!name || !avatar) {
+  if (!name || !avatar || !email || !password) {
     return res
       .status(BAD_REQUEST)
-      .send({ message: "Name and avatar are required" });
+      .send({ message: "Name, avatar, email, and password are required" });
   }
 
-  return User.create({ name, avatar })
+  return bcrypt
+    .hash(password, 10)
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       console.error(err);
