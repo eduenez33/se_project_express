@@ -1,6 +1,7 @@
 const ClothingItem = require("../models/clothingItem");
 const {
   BAD_REQUEST,
+  FORBIDDEN,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
 } = require("../utils/errors");
@@ -46,11 +47,21 @@ const createClothingItem = (req, res) => {
 };
 
 const deleteClothingItem = (req, res) => {
-  ClothingItem.findByIdAndDelete(req.params.itemId)
+  ClothingItem.findById(req.params.itemId)
     .orFail(() => {
       const error = new Error("Item not found");
       error.statusCode = NOT_FOUND;
       throw error;
+    })
+    .then((item) => {
+      if (!item.owner.equals(req.user._id)) {
+        const error = new Error(
+          "Access denied: Only the item owner can delete this item"
+        );
+        error.statusCode = FORBIDDEN;
+        throw error;
+      }
+      return ClothingItem.findByIdAndDelete(req.params.itemId);
     })
     .then(() => {
       res.send({ message: "Item deleted successfully" });
@@ -59,6 +70,8 @@ const deleteClothingItem = (req, res) => {
       console.error(err);
       if (err.statusCode === NOT_FOUND) {
         res.status(NOT_FOUND).send({ message: err.message });
+      } else if (err.statusCode === FORBIDDEN) {
+        res.status(FORBIDDEN).send({ message: err.message });
       } else if (err.name === "CastError" || err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({ message: "Invalid item ID" });
       } else {
