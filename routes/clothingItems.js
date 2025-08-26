@@ -6,7 +6,7 @@ const {
   addLike,
   removeLike,
 } = require("../controllers/clothingItems");
-const auth = require("../middleware/auth");
+const auth = require("../middlewares/auth");
 
 router.get("/", getClothingItems);
 router.post("/", auth, createClothingItem);
