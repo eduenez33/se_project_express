@@ -98,4 +98,36 @@ const login = (req, res) => {
     });
 };
 
-module.exports = { getUsers, getCurrentUser, createUser, login };
+const updateCurrentUser = (req, res) => {
+  const { name, avatar } = req.body;
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, avatar },
+    { new: true, runValidators: true }
+  )
+    .orFail(() => {
+      const error = new Error("User not found");
+      error.statusCode = NOT_FOUND;
+      throw error;
+    })
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      console.error(err);
+      if (err.statusCode === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: err.message });
+      } else if (err.name === "ValidationError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid data provided" });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid user ID" });
+      } else {
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: "An error occurred on the server" });
+      }
+    });
+};
+
+module.exports = { getCurrentUser, createUser, login, updateCurrentUser };
