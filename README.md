@@ -110,3 +110,9 @@ This application uses **JWT (JSON Web Tokens)** for authentication and authoriza
 - Nodemon
 
 - ESLint
+
+## Links
+
+- **Deployed project domain**: https://www.weatherfit.ambientcoffee.com
+- **Frontend GitHub repository**: https://github.com/eduenez33/se_project_react
+- **Project pitch video**: https://www.loom.com/share/d3a0e757737b41de946b1aacdee7434d?sid=91734997-9d53-41ee-9fc2-168560d3a8be
