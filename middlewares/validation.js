@@ -73,10 +73,10 @@ module.exports.validateUserUpdate = celebrate({
 
 module.exports.validateId = celebrate({
   params: Joi.object().keys({
-    _id: Joi.string().required().hex().length(24).messages({
-      "string.empty": 'The "_id" field must be filled in',
-      "string.hex": 'The "_id" field must be a valid hexadecimal string',
-      "string.length": 'The "_id" field must be exactly 24 characters long',
+    itemId: Joi.string().required().hex().length(24).messages({
+      "string.empty": 'The "itemId" field must be filled in',
+      "string.hex": 'The "itemId" field must be a valid hexadecimal string',
+      "string.length": 'The "itemId" field must be exactly 24 characters long',
     }),
   }),
 });
